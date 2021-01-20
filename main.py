@@ -4,22 +4,25 @@ import random
 
 BACKGROUND_COLOR = "#B1DDC6"
 INDEX = 0
+WORD_LIST = {}
+
 
 #  import data
 try:
     data = pd.read_csv("data/words_to_learn.csv")
 except FileNotFoundError:
-    data = pd.read_csv("data/french_words.csv")
+    original_data = pd.read_csv("data/french_words.csv")
+    WORD_LIST = original_data.to_dict(orient="records")
+else:
+    WORD_LIST = data.to_dict(orient="records")
 
-word_list = data.to_dict(orient="records")
-removed_words = []
 
 
 #  create button functions
 def check_button():
     root.after_cancel(3000)
-    word_list.remove(word_list[INDEX])
-    new_data = pd.DataFrame(word_list)
+    WORD_LIST.remove(WORD_LIST[INDEX])
+    new_data = pd.DataFrame(WORD_LIST)
     new_data.to_csv("data/words_to_learn.csv", index=False)
     next_card()
 
@@ -27,12 +30,12 @@ def check_button():
 def next_card():
     global INDEX, flip_timer
     root.after_cancel(flip_timer)
-    INDEX = random.randint(0, len(word_list))
+    INDEX = random.randint(0, len(WORD_LIST))
     # cross_button["state"] = "disabled"
     # check_button["state"] = "disabled"
     canvas.itemconfig(flash_image, image=flashcard_front)
     canvas.itemconfig(lang_text, text="French", fill="black")
-    canvas.itemconfig(word_text, text=word_list[INDEX]["French"], fill="black")
+    canvas.itemconfig(word_text, text=WORD_LIST[INDEX]["French"], fill="black")
     # cross_button["state"] = "normal"
     # check_button["state"] = "normal"
     flip_timer = root.after(3000, func=flip_card)
@@ -41,7 +44,7 @@ def next_card():
 def flip_card():
     canvas.itemconfig(flash_image, image=flashcard_back)
     canvas.itemconfig(lang_text, text="English", fill="white")
-    canvas.itemconfig(word_text, text=word_list[INDEX]["English"], fill="white")
+    canvas.itemconfig(word_text, text=WORD_LIST[INDEX]["English"], fill="white")
 
 
 #  Window
