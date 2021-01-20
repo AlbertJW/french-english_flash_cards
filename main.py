@@ -17,7 +17,6 @@ else:
     WORD_LIST = data.to_dict(orient="records")
 
 
-
 #  create button functions
 def check_button():
     root.after_cancel(3000)
